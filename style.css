@@ -1,0 +1,168 @@
+/* ============================================================================
+   style.css
+   The face itself is just a black canvas - nearly everything here exists
+   to make sure that canvas fills the screen edge-to-edge, ignores scroll/
+   zoom/selection gestures, and never shows the browser's own chrome
+   flickering through. The only "designed UI" is the rarely-seen settings
+   panel, kept quiet and out of the way of the robot's own colour.
+   ========================================================================== */
+
+:root {
+  --bg: #000000;
+  --panel-bg: rgba(10, 12, 16, 0.86);
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --text: rgba(235, 240, 245, 0.92);
+  --text-dim: rgba(200, 210, 220, 0.5);
+  --accent: #5EC6FF;
+  --accent-dim: rgba(94, 198, 255, 0.35);
+  --danger: #ff6b6b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#robot-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: var(--bg);
+  touch-action: none;
+}
+
+/* ------------------------------ settings panel ---------------------------- */
+
+.settings-panel {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+  z-index: 10;
+}
+
+.settings-panel.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.settings-card {
+  width: 100%;
+  max-width: 360px;
+  max-height: 86vh;
+  overflow-y: auto;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  padding: 18px 18px 20px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  transform: translateY(0);
+  transition: transform 220ms ease;
+}
+
+.settings-panel:not(.open) .settings-card { transform: translateY(10px); }
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--panel-border);
+  color: var(--text);
+  font-size: 15px;
+}
+.settings-row:last-of-type { border-bottom: none; }
+
+.settings-title-row { padding-top: 2px; }
+.settings-title { font-size: 16px; font-weight: 600; letter-spacing: 0.1px; }
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1;
+  padding: 6px;
+  cursor: pointer;
+}
+.icon-btn:active { color: var(--text); }
+
+.settings-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  margin-top: 10px;
+  padding: 12px 14px;
+}
+.settings-btn:active { background: rgba(255, 255, 255, 0.09); }
+.settings-btn:disabled { color: var(--text-dim); opacity: 0.6; }
+.settings-btn.settings-reset { color: var(--danger); border-color: rgba(255, 107, 107, 0.25); }
+
+.settings-switch { cursor: pointer; }
+.settings-switch input[type="checkbox"] { display: none; }
+.switch-track {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  transition: background 180ms ease;
+  flex: none;
+}
+.switch-thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 180ms ease;
+}
+.settings-switch input:checked + .switch-track { background: var(--accent-dim); }
+.settings-switch input:checked + .switch-track .switch-thumb {
+  transform: translateX(18px);
+  background: var(--accent);
+}
+
+.settings-slider-row { flex-direction: column; align-items: stretch; gap: 8px; }
+.settings-slider-row span { font-size: 15px; }
+#intensity-slider {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.settings-hint {
+  margin: 14px 2px 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-panel, .settings-card { transition: none; }
+}
